@@ -5,18 +5,15 @@
 import { LOGO_VIEWBOX, LOGO_STROKES, LOGO_FILL_PATH } from './logoPaths.js';
 
 /* ---------- НАСТРОЙКИ АНИМАЦИИ ---------- */
-export const DRAW_STROKE_MS = 350;   // время рисования одного контура
-export const DRAW_GAP_MS = 60;       // пауза между контурами
-export const FILL_FADE_MS = 900;     // затухание заливки после обводки
-export const HOLD_AFTER_DRAW_MS = 1200; // сколько секунд держим дорисованный логотип
+const DRAW_STROKE_MS = 350;      // время рисования одного контура
+const DRAW_GAP_MS = 60;          // пауза между контурами
+const FILL_FADE_MS = 900;        // затухание заливки после обводки
+const HOLD_AFTER_DRAW_MS = 1200; // сколько держим дорисованный логотип
 
 /** Полная длительность анимации рисования (обводка + заливка + удержание). */
 export function getTotalDrawDurationMs() {
-  return (
-    LOGO_STROKES.length * (DRAW_STROKE_MS + DRAW_GAP_MS) +
-    FILL_FADE_MS +
-    HOLD_AFTER_DRAW_MS
-  );
+  const strokesMs = LOGO_STROKES.length * (DRAW_STROKE_MS + DRAW_GAP_MS);
+  return strokesMs + FILL_FADE_MS + HOLD_AFTER_DRAW_MS;
 }
 
 /**
@@ -89,5 +86,5 @@ export function mountLogoDrawing(container) {
     fillPath.classList.add('preloader__logo-fill--visible');
   }
 
-  return { svg, finish };
+  return { svg, finish, totalMs: getTotalDrawDurationMs() };
 }

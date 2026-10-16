@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>АРКА 123</title>
     <link rel="icon" type="image/png" href="/logo.png" />
-     <script type="module" src="/src/preloader/preloader.js"></script>
+        <!-- Стили прелоадера (вне React, чтобы не было FOUC) -->
+    <link rel="stylesheet" href="/src/preloader/preloader.css" />
   </head>
   <body>
     <!-- Прелоадер -->
@@ -27,6 +28,6 @@
     <div id="root"></div>
 
     <script type="module" src="/src/main.jsx"></script>
-    <script src="/src/preloader/preloader.js" defer></script>
+    <script type="module" src="/src/preloader/preloader.js"></script>
   </body>
 </html>

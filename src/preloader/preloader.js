@@ -1,58 +1,67 @@
 /**
  * Прелоадер: рендерит текстовый блок и скрывается после отрисовки React-приложения.
  */
-import {
-  mountLogoDrawing,
-  getTotalDrawDurationMs,
-  FILL_FADE_MS,
-  HOLD_AFTER_DRAW_MS,
-} from './logoDraw.js';
+import { mountLogoDrawing } from './logoDraw.js';
 
-const MIN_VISIBLE_MS = 3000; // минимальное время показа прелоадера
-const HIDE_DELAY_MS = 800;   // пауза после завершения анимации/первой отрисовки React
-const FALLBACK_MS = Math.max(MIN_VISIBLE_MS, getTotalDrawDurationMs()) + 1500; // страховка
+const LOGO_CONTAINER_ID = 'arka-logo';
+const PRELOADER_ID = 'preloader';
+const ROOT_ID = 'root';
+const BUS_CHANNEL = 'PreloaderBus';
+
+const HIDE_DELAY_MS = 800; // пауза после готовности анимации и приложения
+
+/* ---------- Шина событий ---------- */
+
+function getBus() {
+  if (!window[BUS_CHANNEL]) {
+    window[BUS_CHANNEL] = new EventTarget();
+  }
+  return window[BUS_CHANNEL];
+}
 
 /* ---------- Логотип (анимация рисования) ---------- */
 
 let drawFinishedAt = null; // когда завершилась анимация рисования логотипа
 
 function mountLogo() {
-  const container = document.getElementById('arka-logo');
+    const container = document.getElementById(LOGO_CONTAINER_ID);
   if (!container) return;
   try {
-    const { finish } = mountLogoDrawing(container);
-    // Страховка: если анимация не завершилась вовремя — показать итог мгновенно
-    setTimeout(finish, getTotalDrawDurationMs());
+  const { finish, totalMs } = mountLogoDrawing(container);
+
+    // Анимация считается завершённой по истечении её полной длительности
+    setTimeout(markDrawFinished, totalMs);
+
+    // Страховка: если тайминги CSS-переходов «уплыдут» — показать итог сразу
+    setTimeout(finish, totalMs + 1000);
   } catch (e) {
     console.error('Preloader: не удалось отрисовать логотип', e);
+  markDrawFinished(); // всё равно считаем этап пройденным
   }
 }
 /* ---------- Текстовый блок ---------- */
 
+const TEXT_LINES = [
+  { className: 'arka-logo__title', text: 'АРКА 123' },
+  { className: 'arka-logo__subtitle arka-logo__subtitle--line1', text: 'Встречаемся напротив' },
+  { className: 'arka-logo__subtitle arka-logo__subtitle--line2', text: 'библиотеки.' },
+];
+
 function buildText() {
   const wrap = document.createElement('div');
   wrap.className = 'arka-logo__text';
-
-  const title = document.createElement('div');
-  title.className = 'arka-logo__title';
-  title.textContent = 'АРКА 123';
-
-  const sub1 = document.createElement('div');
-  sub1.className = 'arka-logo__subtitle arka-logo__subtitle--line1';
-  sub1.textContent = 'Встречаемся напротив';
-
-  const sub2 = document.createElement('div');
-  sub2.className = 'arka-logo__subtitle arka-logo__subtitle--line2';
-  sub2.textContent = 'библиотеки.';
-
-    wrap.append(title, sub1, sub2);
-    return wrap;
+ for (const { className, text } of TEXT_LINES) {
+    const el = document.createElement('div');
+    el.className = className;
+    el.textContent = text;
+    wrap.appendChild(el);
   }
-
-  function mountText(selector) {
-  const container = document.querySelector(selector);
+  return wrap;
+}
+  function mountText() {
+  const container = document.getElementById(LOGO_CONTAINER_ID);
   if (!container) {
-    console.error('Preloader: контейнер не найден', selector);
+    console.error(`Preloader: контейнер #${LOGO_CONTAINER_ID} не найден`);
     return;
   }
   container.appendChild(buildText());
@@ -61,13 +70,17 @@ function buildText() {
  /* ---------- Скрытие ---------- */
 
 function hidePreloader() {
-  const preloader = document.getElementById('preloader');
+   const preloader = document.getElementById(PRELOADER_ID);
   if (!preloader || preloader.dataset.hiding) return;
   preloader.dataset.hiding = 'true';
 
   preloader.classList.add('preloader--hidden');
   // Удаляем элемент из DOM после завершения CSS-анимации
   preloader.addEventListener('transitionend', () => preloader.remove(), { once: true });
+    // ...и принудительно, если transitionend не сработал (например, вкладка в фоне)
+  setTimeout(() => preloader.remove(), 1000);
+
+  getBus().dispatchEvent(new CustomEvent('preloader-hidden'));
 }
 
 // Вариант 1: ждать, пока React отрендерится в #root
@@ -93,34 +106,28 @@ function markDrawFinished() {
   tryHideWhenReady();
 }
 
-function waitForReact() {
-  const root = document.getElementById('root');
+// Способ 1 (основной): событие от React-приложения через шину
+getBus().addEventListener('react-ready', markReactReady);
+
+// Способ 2 (совместимость): опрос #root до первой отрисовки React
+function waitForReactDom() {
+  const root = document.getElementById(ROOT_ID);
   if (root && root.childElementCount > 0) {
     // Даём ещё немного времени на первую отрисовку
      markReactReady();
   } else {
-    requestAnimationFrame(waitForReact);
+      requestAnimationFrame(waitForReactDom);
   }
 }
 
 /* ---------- Инициализация ---------- */
 mountLogo();
-mountText('#arka-logo');
-
-// Отслеживаем завершение анимации рисования логотипа
-const logoFillObserver = setInterval(() => {
-  const fill = document.querySelector('.preloader__logo-fill--visible');
-  if (fill) {
-    clearInterval(logoFillObserver);
-    // Заливка проявляется в конце обводки, добавим время на её затухание и удержание
-    setTimeout(markDrawFinished, FILL_FADE_MS + HOLD_AFTER_DRAW_MS);
-  }
-}, 100);
+mountText();
 
 if (document.readyState === 'complete') {
-  waitForReact();
+   waitForReactDom();
 } else {
-  window.addEventListener('load', waitForReact);
+  window.addEventListener('load', waitForReactDom);
 }
 // Страховка: если приложение не отрисовалось, скрываем прелоадер принудительно
-setTimeout(hidePreloader, FALLBACK_MS);
+setTimeout(hidePreloader, 30000);

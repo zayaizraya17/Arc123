@@ -1,6 +1,6 @@
-import { Link, Route, Routes, NavLink } from 'react-router-dom';
-import Home from './pages/Home';
-import About from './pages/About';
+import { useEffect } from 'react';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { usePreloaderDismiss } from './preloader/usePreloaderDismiss.js';
 import './App.css';
 
 const NAV_LINKS = [
@@ -9,14 +9,22 @@ const NAV_LINKS = [
 ];
 
 export default function App() {
+  // Сообщаем прелоадеру, что приложение отрисовано, и синхронно
+  // скрываем его — теперь это делает и сам прелоадер, и React.
+  usePreloaderDismiss();
 
+  // Плавно прокручиваем наверх при смене маршрута
+  const location = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
   return (
     <div className="app">
       <nav className="nav">
-        <Link to="/" className="nav__logo">
-          <img src="/logo.png" alt="Logo" />
-          <span>MyApp</span>
-        </Link>
+        <NavLink to="/" className="nav__logo">
+          <img src="/logo.png" alt="Логотип АРКА 123" />
+          <span>АРКА 123</span>
+        </NavLink>
 
         <ul className="nav__links">
           {NAV_LINKS.map(({ to, label }) => (
@@ -33,10 +41,8 @@ export default function App() {
         </ul>
       </nav>
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
+      {/* Здесь рендерится текущая страница (см. routes в main.jsx) */}
+      <Outlet />
     </div>
   );
 }
