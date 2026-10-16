@@ -1,0 +1,97 @@
+/* ===== Контейнер прелоадера ===== */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.preloader--hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ===== Текстовая часть ===== */
+.arka-logo__text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center; /* Добавлено для центрирования текста без логотипа */
+}
+
+.arka-logo__title {
+  font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 72px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #fff;
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: arka-slide-in 0.8s ease-out forwards;
+  animation-delay: 0.5s; /* Скорректирована задержка, так как нет анимации рисования */
+}
+
+.arka-logo__subtitle {
+  font-family: 'Arial', sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #fff;
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: arka-slide-in 0.8s ease-out forwards;
+}
+
+.arka-logo__subtitle--line1 { animation-delay: 1.1s; }
+.arka-logo__subtitle--line2 { animation-delay: 1.5s; }
+
+@keyframes arka-slide-in {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ===== Частицы ===== */
+.preloader__particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.preloader__particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #f5f5dc;
+  border-radius: 50%;
+  opacity: 0;
+  animation: particleFloat 3s ease-in-out infinite;
+}
+
+.preloader__particle:nth-child(1) { left: 20%; animation-delay: 0s; }
+.preloader__particle:nth-child(2) { left: 40%; animation-delay: 0.5s; }
+.preloader__particle:nth-child(3) { left: 60%; animation-delay: 1s; }
+.preloader__particle:nth-child(4) { left: 80%; animation-delay: 1.5s; }
+
+@keyframes particleFloat {
+  0% {
+    opacity: 0;
+    transform: translateY(100vh) scale(0);
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100px) scale(1);
+  }
+}

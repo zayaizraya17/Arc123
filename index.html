@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My App</title>
+    <link rel="stylesheet" href="/src/preloader/preloader.css" />
+  </head>
+  <body>
+    <!-- Прелоадер -->
+    <div id="preloader" class="preloader">
+      <!-- Частицы -->
+      <div class="preloader__particles">
+        <div class="preloader__particle"></div>
+        <div class="preloader__particle"></div>
+        <div class="preloader__particle"></div>
+        <div class="preloader__particle"></div>
+      </div>
+
+      <!-- Текст -->
+      <div class="preloader__text">Загрузка</div>
+    </div>
+
+    <!-- Корень React -->
+    <div id="root"></div>
+
+    <script type="module" src="/src/main.jsx"></script>
+    <script src="/src/preloader/preloader.js" defer></script>
+  </body>
+</html>
