@@ -18,6 +18,29 @@
   pointer-events: none;
 }
 
+/* ===== Логотип (анимация рисования) ===== */
+.preloader__logo-svg {
+  width: min(480px, 80vw);
+  height: auto;
+  display: block;
+}
+
+.preloader__logo-stroke {
+  stroke: #f5f5dc;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.preloader__logo-fill {
+  fill: #f5f5dc;
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+
+.preloader__logo-fill--visible {
+  opacity: 1;
+}
 /* ===== Текстовая часть ===== */
 .arka-logo__text {
   display: flex;
