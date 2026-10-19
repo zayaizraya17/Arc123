@@ -33,7 +33,11 @@ function mountGif() {
 
 /* ---------- Текстовый блок ---------- */
 
-
+const TEXT_LINES = [
+  { className: 'arka-logo__title', text: 'АРКА 123' },
+  { className: 'arka-logo__subtitle arka-logo__subtitle--line1', text: 'Архитектурное бюро' },
+  { className: 'arka-logo__subtitle arka-logo__subtitle--line2', text: 'Проектируем будущее с 2012 года' },
+];
 
 function buildText() {
   const wrap = document.createElement('div');
@@ -71,6 +75,13 @@ function hidePreloader() {
   getBus().dispatchEvent(new CustomEvent('preloader-hidden'));
 }
 
+  // Страховка: если по какой-то причине прелоадер остался виден
+  // (например, у элемента нет CSS-перехода), убираем его совсем,
+  // чтобы главная страница гарантированно появилась.
+  setTimeout(() => {
+    const p = document.getElementById(PRELOADER_ID);
+    if (p) p.remove();
+  }, 2000);
 // Вариант 1: ждать, пока React отрендерится в #root
 // Ждём, пока React отрендерится в #root и анимация логотипа завершится
 let reactReadyAt = null;
