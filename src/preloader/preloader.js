@@ -1,8 +1,3 @@
-/**
- * Прелоадер: рендерит текстовый блок и скрывается после отрисовки React-приложения.
- */
-import { mountLogoDrawing } from './logoDraw.js';
-
 const LOGO_CONTAINER_ID = 'arka-logo';
 const PRELOADER_ID = 'preloader';
 const ROOT_ID = 'root';
@@ -21,31 +16,24 @@ function getBus() {
 
 /* ---------- Логотип (анимация рисования) ---------- */
 
-let drawFinishedAt = null; // когда завершилась анимация рисования логотипа
+// Путь к гифке относительно корня public/ (например, '/loader.gif').
+// Когда путь не указан — гифка просто не добавляется, ошибок не будет.
+const GIF_SRC = './logoV.gif'; // <-- укажите здесь путь к вашей гифке, например '/loader.gif'
 
-function mountLogo() {
-    const container = document.getElementById(LOGO_CONTAINER_ID);
+function mountGif() {
+  if (!GIF_SRC) return;
+  const container = document.getElementById(LOGO_CONTAINER_ID);
   if (!container) return;
-  try {
-  const { finish, totalMs } = mountLogoDrawing(container);
-
-    // Анимация считается завершённой по истечении её полной длительности
-    setTimeout(markDrawFinished, totalMs);
-
-    // Страховка: если тайминги CSS-переходов «уплыдут» — показать итог сразу
-    setTimeout(finish, totalMs + 1000);
-  } catch (e) {
-    console.error('Preloader: не удалось отрисовать логотип', e);
-  markDrawFinished(); // всё равно считаем этап пройденным
-  }
+  const img = document.createElement('img');
+  img.className = 'preloader__gif';
+  img.src = GIF_SRC;
+  img.alt = '';
+  container.insertBefore(img, container.firstChild);
 }
+
 /* ---------- Текстовый блок ---------- */
 
-const TEXT_LINES = [
-  { className: 'arka-logo__title', text: 'АРКА 123' },
-  { className: 'arka-logo__subtitle arka-logo__subtitle--line1', text: 'Встречаемся напротив' },
-  { className: 'arka-logo__subtitle arka-logo__subtitle--line2', text: 'библиотеки.' },
-];
+
 
 function buildText() {
   const wrap = document.createElement('div');
@@ -87,23 +75,10 @@ function hidePreloader() {
 // Ждём, пока React отрендерится в #root и анимация логотипа завершится
 let reactReadyAt = null;
 
-function tryHideWhenReady() {
-  if (reactReadyAt === null || drawFinishedAt === null) return;
-  const readyAt = Math.max(reactReadyAt, drawFinishedAt);
-  const wait = Math.max(0, readyAt + HIDE_DELAY_MS - Date.now());
-  setTimeout(hidePreloader, wait);
-}
-
 function markReactReady() {
   if (reactReadyAt !== null) return;
   reactReadyAt = Date.now();
-  tryHideWhenReady();
-}
-
-function markDrawFinished() {
-  if (drawFinishedAt !== null) return;
-  drawFinishedAt = Date.now();
-  tryHideWhenReady();
+   setTimeout(hidePreloader, HIDE_DELAY_MS);
 }
 
 // Способ 1 (основной): событие от React-приложения через шину
@@ -121,7 +96,7 @@ function waitForReactDom() {
 }
 
 /* ---------- Инициализация ---------- */
-mountLogo();
+mountGif();
 mountText();
 
 if (document.readyState === 'complete') {

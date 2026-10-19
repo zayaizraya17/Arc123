@@ -1,12 +1,4 @@
-/**
- * Хук-мост между императивным прелоадером (src/preloader) и React-приложением.
- *
- * Прелоадер живёт вне React (подключается напрямую в index.html), поэтому
- * синхронизация идёт через глобальную шину событий `window.PreloaderBus`:
- *   - приложение сообщает о готовности (signalReactReady);
- *   - прелоадер сообщает о завершении анимации (signalDrawFinished);
- *   - обе стороны подписываются на событие скрытия (onHidden).
- */
+
 import { useEffect } from 'react';
 
 const CHANNEL = 'PreloaderBus';
@@ -21,11 +13,6 @@ function getBus() {
 /** Сообщает прелоадеру, что React-приложение отрисовано. */
 export function signalReactReady() {
   getBus().dispatchEvent(new CustomEvent('react-ready'));
-}
-
-/** Сообщает сторонам, что анимация логотипа завершена. */
-export function signalDrawFinished() {
-  getBus().dispatchEvent(new CustomEvent('draw-finished'));
 }
 
 /** Подписка на факт скрытия прелоадера. Возвращает функцию отписки. */
