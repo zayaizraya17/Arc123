@@ -30,20 +30,13 @@ body {
 .nav__logo {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 24px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #f5f5dc, #ffffff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  cursor: pointer;
 }
 
 .nav__logo img {
   width: 40px;
   height: 40px;
   object-fit: contain;
-  filter: drop-shadow(0 0 10px rgba(245, 245, 220, 0.3));
 }
 
 .nav__links {

@@ -24,39 +24,16 @@
   height: auto;
   display: block;
 }
-/* ===== Текстовая часть ===== */
-.arka-logo__text {
+
+#arka-logo {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  text-align: center; /* Добавлено для центрирования текста без логотипа */
+    align-items: center;
+  justify-content: center;
+  /* Без подсветки и теней за логотипом */
+  filter: none;
+  box-shadow: none;
+  background: transparent;
 }
-
-.arka-logo__title {
-  font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
-  font-size: 72px;
-  font-weight: 900;
-  letter-spacing: 4px;
-  color: #fff;
-  opacity: 0;
-  transform: translateX(-20px);
-  animation: arka-slide-in 0.8s ease-out forwards;
-  animation-delay: 0.5s; /* Скорректирована задержка, так как нет анимации рисования */
-}
-
-.arka-logo__subtitle {
-  font-family: 'Arial', sans-serif;
-  font-size: 22px;
-  font-weight: 400;
-  letter-spacing: 1px;
-  color: #fff;
-  opacity: 0;
-  transform: translateX(-20px);
-  animation: arka-slide-in 0.8s ease-out forwards;
-}
-
-.arka-logo__subtitle--line1 { animation-delay: 0.5s; }
-.arka-logo__subtitle--line2 { animation-delay: 0.9s; }
 
 @keyframes arka-slide-in {
   to {

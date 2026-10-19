@@ -21,9 +21,8 @@ export default function App() {
   return (
     <div className="app">
       <nav className="nav">
-        <NavLink to="/" className="nav__logo">
+      <NavLink to="/" className="nav__logo" aria-label="На главную">
           <img src="/logo.png" alt="Логотип АРКА 123" />
-          <span>АРКА 123</span>
         </NavLink>
 
         <ul className="nav__links">

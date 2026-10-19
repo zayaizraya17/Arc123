@@ -31,34 +31,6 @@ function mountGif() {
   container.insertBefore(img, container.firstChild);
 }
 
-/* ---------- Текстовый блок ---------- */
-
-const TEXT_LINES = [
-  { className: 'arka-logo__title', text: 'АРКА 123' },
-  { className: 'arka-logo__subtitle arka-logo__subtitle--line1', text: 'Архитектурное бюро' },
-  { className: 'arka-logo__subtitle arka-logo__subtitle--line2', text: 'Проектируем будущее с 2012 года' },
-];
-
-function buildText() {
-  const wrap = document.createElement('div');
-  wrap.className = 'arka-logo__text';
- for (const { className, text } of TEXT_LINES) {
-    const el = document.createElement('div');
-    el.className = className;
-    el.textContent = text;
-    wrap.appendChild(el);
-  }
-  return wrap;
-}
-  function mountText() {
-  const container = document.getElementById(LOGO_CONTAINER_ID);
-  if (!container) {
-    console.error(`Preloader: контейнер #${LOGO_CONTAINER_ID} не найден`);
-    return;
-  }
-  container.appendChild(buildText());
-}
-
  /* ---------- Скрытие ---------- */
 
 function hidePreloader() {
@@ -108,7 +80,6 @@ function waitForReactDom() {
 
 /* ---------- Инициализация ---------- */
 mountGif();
-mountText();
 
 if (document.readyState === 'complete') {
    waitForReactDom();
