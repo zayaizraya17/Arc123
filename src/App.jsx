@@ -22,7 +22,7 @@ export default function App() {
     <div className="app">
       <nav className="nav">
       <NavLink to="/" className="nav__logo" aria-label="На главную">
-          <img src="/logo.png" alt="Логотип АРКА 123" />
+          <img src="/logo.png" alt="Лого" />
         </NavLink>
 
         <ul className="nav__links">
